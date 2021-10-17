@@ -1,0 +1,211 @@
+
+
+import java.util.ArrayList;
+
+
+
+public class Family {
+
+
+   ArrayList<Person> family = new ArrayList<Person>();
+
+   public void addPerson(String name, int parent1, int parent2) {
+
+       family.add(new Person(name, parent1, parent2));
+
+   }
+
+   public int getIDFromName(String name) {
+
+       for (Person a : family) {
+
+           if (a.getName() == name) {
+
+               return a.getID();
+
+           }
+
+       }
+
+       return -1;
+
+   }
+
+   public String getNameFromID(int id) {
+
+       for (Person a : family) {
+
+           if (a.getID() == id) {
+
+               return a.getName();
+
+           }
+
+       }
+
+       return "Unknown Person";
+
+   }
+
+   public String parentRelationship(String current) {
+
+       if (current.equals("Self")) {
+
+           return "Parent";
+
+       }
+
+       else if (current.equals("Parent")) {
+
+           return "GrandParent";
+
+       }
+
+       else {
+
+           return "Great " + current;
+
+       }
+
+   }
+
+   public String childRelationship(String current) {
+
+       if (current.equals("Self")) {
+
+           return "Child";
+
+       }
+
+       else if (current.equals("Child")) {
+
+           return "GrandChild";
+
+       }
+
+       else {
+
+           return "Great " + current;
+
+       }
+
+   }
+
+   public String everyone() {
+
+       String returnString = "";
+
+       for (Person a : family) {
+
+           returnString += a.getID() + ") " + a.getName() + "\n";
+
+       }
+
+       return returnString;
+
+   }
+
+   public ArrayList<Integer> getChildrenIDs(int id) {
+
+       // For this method you should use a loop.
+
+       // Here you will iterate through the family arraylist
+
+       // Looking for any direct children of the passed in id
+
+       // i.e. any Person who has a parent1 or parent 2 that matches id
+
+       // If you find any, add them to the List. Be sure to avoid duplicates
+
+       ArrayList<Integer> child = new ArrayList<>();
+       for (Person a : family) {
+           int val1 = a.getParent1();
+           int val2 = a.getParent2();
+           if (val1 == id && !(child.contains(val1))) {
+               child.add(a.getID());
+           }
+
+           if (val2 == id && !(child.contains(val2))) {
+               child.add(a.getID());
+           }
+       }
+
+       return child;
+   }
+
+   public int[] getParents(int ID) {
+
+       // For this method you should use a loop.
+
+       // Here you'll return an array of size 2, with the 2 parents you find.
+
+       // You'll iterate over the family arraylist, looking for parents of ID
+
+       int[] parents = new int[2];
+       for (Person a : family) {
+           int val = a.getID();
+           if (val == ID) {
+               parents[0] = a.getParent1();
+               parents[1] = a.getParent2();
+               return parents;
+           }
+       }
+
+       return null;
+   }
+
+   public void printParents(int childID, String relationship) {
+
+       // This method must be recursive.
+
+       // You'll be past a person ID and the word "Self"
+
+       // If the ChildID is not -1 you'll
+
+       // * Print the relationship passed followed by a space followed by
+
+       // the name of the person who's ID is childID
+
+       if (childID != -1) {
+           System.out.println(relationship + " " + getNameFromID(childID));
+
+           // * Figure out the relationship of this the next parent generation.
+
+           relationship = parentRelationship(relationship);
+
+           // * Create an array of ints, and store the childID's parents in it.
+           int[] parents = getParents(childID);
+           // * Using recursion, find the first parents parents
+           printParents(parents[0], relationship);
+           // * Using recursion, find the second parents parents
+           printParents(parents[1], relationship);
+       }
+   }
+
+   public void printChildren(int parentID, String relationship) {
+
+       // This method must be recursive.
+
+       // You'll be past a person ID and the word "Self"
+
+       // If the parentID is not -1 you'll
+
+       // * Print the relationship passed followed by a space followed by
+       // the name of the person who's ID is parentID
+      
+       if(parentID!=-1){
+           System.out.println(relationship + " " + getNameFromID(parentID));
+
+       // * Figure out the relationship of this the next childs generation.
+       relationship = childRelationship(relationship);
+
+       // * Create a list of ints, and store the parentID's children in it.
+       ArrayList<Integer> allChild = getChildrenIDs(parentID);
+
+       // * Using recursion, recurse over each child
+       for(int i=0;i<allChild.size();i++)
+           printChildren(allChild.get(i), relationship);
+       }
+
+   }
+}
